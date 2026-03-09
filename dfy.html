@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="bn" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do You Love Me?</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&amp;family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    .app-wrapper {
+      min-height: 100%;
+      width: 100%;
+    }
+    
+    .font-pacifico {
+      font-family: 'Pacifico', cursive;
+    }
+    
+    .font-poppins {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .no-btn {
+      position: fixed !important;
+      transition: none;
+      pointer-events: auto;
+      min-width: 120px;
+      min-height: 50px;
+    }
+    
+    .no-btn:active {
+      pointer-events: none;
+    }
+    
+    @media (max-width: 768px) {
+      .no-btn {
+        font-size: 0.875rem;
+        padding: 10px 20px !important;
+        min-width: 100px;
+        min-height: 45px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .no-btn {
+        font-size: 0.75rem;
+        padding: 8px 16px !important;
+        min-width: 80px;
+        min-height: 40px;
+      }
+    }
+    
+    .heart-float {
+      position: absolute;
+      animation: floatUp 3s ease-out forwards;
+      pointer-events: none;
+      font-size: 2rem;
+    }
+    
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-200px) scale(1.5);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .animate-pulse-heart {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .animate-bounce-slow {
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd700;
+      border-radius: 50%;
+      animation: sparkleAnim 1.5s ease-out forwards;
+      pointer-events: none;
+    }
+    
+    @keyframes sparkleAnim {
+      0% {
+        opacity: 1;
+        transform: scale(0) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.5) rotate(360deg);
+      }
+    }
+    
+    .success-container {
+      animation: fadeInScale 0.8s ease-out forwards;
+    }
+    
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    
+    @keyframes confettiFall {
+      0% {
+        opacity: 1;
+        transform: translateY(-100px) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(500px) rotate(720deg);
+      }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full">
+  <div id="app" class="app-wrapper relative overflow-hidden" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);">
+   <!-- Question Page -->
+   <div id="questionPage" class="h-full w-full flex flex-col items-center justify-center p-6 relative">
+    <!-- Floating hearts background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" id="bgHearts"></div><!-- Main content -->
+    <div class="text-center z-10">
+     <!-- Sender info -->
+     <p id="senderInfo" class="font-poppins text-sm md:text-base mb-6 opacity-80" style="color: #8b5a5a;">This is from Mamun 💌</p><!-- Dear crush -->
+     <p class="font-poppins text-lg md:text-xl mb-8 font-semibold" style="color: #c44569;">Dear Crush 💝</p><!-- Heart icon -->
+     <div class="text-8xl mb-6 animate-pulse-heart">
+      💕
+     </div><!-- Question -->
+     <h1 id="mainQuestion" class="font-pacifico text-4xl md:text-6xl mb-12" style="color: #c44569; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Do You Love Me?</h1><!-- Buttons container -->
+     <div class="relative h-32 w-full max-w-md mx-auto">
+      <!-- Yes Button --> <button id="yesBtn" class="font-poppins font-bold text-xl px-10 py-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;"> Yes 💕 </button> <!-- No Button (Escaping) --> <button id="noBtn" class="no-btn font-poppins font-bold text-xl px-10 py-4 rounded-full shadow-lg" style="background: linear-gradient(135deg, #a8a8a8 0%, #6b6b6b 100%); color: white; left: 50%; top: 70px; transform: translateX(-50%);"> No 😢 </button>
+     </div><!-- Hint text -->
+     <p class="font-poppins text-sm mt-16 opacity-70" style="color: #c44569;">Try clicking "No" if you can! 😏</p>
+    </div>
+   </div><!-- Success Page (Hidden initially) -->
+   <div id="successPage" class="h-full w-full flex-col items-center justify-center p-6 relative hidden">
+    <!-- Confetti container -->
+    <div id="confettiContainer" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+    <div class="success-container text-center z-10">
+     <!-- Big heart -->
+     <div class="text-9xl mb-8 animate-bounce-slow">
+      💖
+     </div><!-- Success title -->
+     <h1 id="successTitle" class="font-pacifico text-5xl md:text-7xl mb-6" style="color: #c44569; text-shadow: 3px 3px 6px rgba(0,0,0,0.1);">I Knew It! 💖</h1><!-- Success message -->
+     <p id="successMessage" class="font-poppins text-xl md:text-2xl mb-8 max-w-lg mx-auto" style="color: #8b5a5a;">You just made my heart skip a beat! 💓</p><!-- Decorative hearts -->
+     <div class="flex justify-center gap-4 text-4xl mb-8">
+      <span class="animate-pulse-heart" style="animation-delay: 0s;">💕</span> <span class="animate-pulse-heart" style="animation-delay: 0.2s;">💗</span> <span class="animate-pulse-heart" style="animation-delay: 0.4s;">💖</span> <span class="animate-pulse-heart" style="animation-delay: 0.6s;">💗</span> <span class="animate-pulse-heart" style="animation-delay: 0.8s;">💕</span>
+     </div><!-- Sweet message -->
+     <div class="font-poppins p-6 rounded-2xl max-w-md mx-auto" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+      <p class="text-lg mb-4" style="color: #c44569;">You are the reason my heart beats faster every single day 💓</p>
+      <p class="text-sm opacity-80" style="color: #8b5a5a;">Thank you for choosing YES! 🥰</p>
+     </div><!-- Restart button --> <button id="restartBtn" class="font-poppins font-bold text-lg px-8 py-3 rounded-full shadow-lg mt-8 transform hover:scale-105 transition-all duration-300" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;"> Ask Again? 💕 </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      sender_name: "This is from Mamun",
+      main_question: "Do You Love Me?",
+      yes_button_text: "Yes 💕",
+      no_button_text: "No 😢",
+      success_title: "I Knew It! 💖",
+      success_message: "You just made my heart skip a beat! 💓",
+      background_color: "#ff9a9e",
+      text_color: "#c44569",
+      button_color: "#f5576c",
+      secondary_color: "#8b5a5a",
+      surface_color: "#ffffff"
+    };
+
+    // Elements
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const questionPage = document.getElementById('questionPage');
+    const successPage = document.getElementById('successPage');
+    const restartBtn = document.getElementById('restartBtn');
+    const app = document.getElementById('app');
+    const senderInfo = document.getElementById('senderInfo');
+    
+    // No button escape logic
+    let escapeCount = 0;
+    
+    function moveNoButton() {
+      const container = document.getElementById('questionPage');
+      const containerRect = container.getBoundingClientRect();
+      const containerWidth = containerRect.width;
+      const containerHeight = containerRect.height;
+      const btnWidth = 140;
+      const btnHeight = 60;
+      const padding = 30;
+      
+      // Calculate max positions keeping button fully inside
+      const maxX = containerWidth - btnWidth - padding;
+      const maxY = containerHeight - btnHeight - padding;
+      
+      let newX = Math.random() * maxX;
+      let newY = Math.random() * maxY;
+      
+      // Ensure button stays inside with padding
+      newX = Math.max(padding, Math.min(newX, maxX));
+      newY = Math.max(padding, Math.min(newY, maxY));
+      
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = (containerRect.left + newX) + 'px';
+      noBtn.style.top = (containerRect.top + newY) + 'px';
+      noBtn.style.transform = 'none';
+      
+      escapeCount++;
+      
+      // Change button text based on escape count
+      const messages = [
+        "No 😢",
+        "Nope! 🏃",
+        "Can't catch me! 😜",
+        "Too slow! 💨",
+        "Try harder! 😏",
+        "Never! 🙅",
+        "Just click Yes! 💕",
+        "Give up? 😂",
+        "Yes is easier! 💖"
+      ];
+      
+      noBtn.textContent = messages[Math.min(escapeCount, messages.length - 1)];
+      
+      // Create sparkle effect
+      createSparkle(newX + btnRect.width/2, newY + btnRect.height/2);
+    }
+    
+    function createSparkle(x, y) {
+      for (let i = 0; i < 5; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = (x + (Math.random() - 0.5) * 50) + 'px';
+        sparkle.style.top = (y + (Math.random() - 0.5) * 50) + 'px';
+        sparkle.style.background = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b9d'][Math.floor(Math.random() * 5)];
+        app.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 1500);
+      }
+    }
+    
+    // Event listeners for No button
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+    noBtn.addEventListener('focus', moveNoButton);
+    
+    // Yes button click
+    yesBtn.addEventListener('click', () => {
+      showSuccessPage();
+    });
+    
+    function showSuccessPage() {
+      questionPage.classList.add('hidden');
+      successPage.classList.remove('hidden');
+      successPage.classList.add('flex');
+      
+      // Create confetti
+      createConfetti();
+      
+      // Create floating hearts
+      setInterval(createFloatingHeart, 500);
+    }
+    
+    function createConfetti() {
+      const container = document.getElementById('confettiContainer');
+      const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b9d', '#a66cff', '#f093fb'];
+      
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+          container.appendChild(confetti);
+          
+          setTimeout(() => confetti.remove(), 3000);
+        }, i * 50);
+      }
+    }
+    
+    function createFloatingHeart() {
+      const hearts = ['💕', '💖', '💗', '💓', '❤️', '🥰', '😍'];
+      const heart = document.createElement('div');
+      heart.className = 'heart-float';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.bottom = '0';
+      successPage.appendChild(heart);
+      
+      setTimeout(() => heart.remove(), 3000);
+    }
+    
+    // Restart button
+    restartBtn.addEventListener('click', () => {
+      successPage.classList.add('hidden');
+      successPage.classList.remove('flex');
+      questionPage.classList.remove('hidden');
+      escapeCount = 0;
+      noBtn.textContent = defaultConfig.no_button_text;
+      noBtn.style.left = '50%';
+      noBtn.style.top = '70px';
+      noBtn.style.transform = 'translateX(-50%)';
+    });
+    
+    // Create initial background hearts
+    function createBgHearts() {
+      const container = document.getElementById('bgHearts');
+      const hearts = ['💕', '💖', '💗', '💓', '❤️'];
+      
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.position = 'absolute';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.top = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+        heart.style.opacity = '0.2';
+        heart.style.animation = `pulse ${2 + Math.random() * 2}s ease-in-out infinite`;
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(heart);
+      }
+    }
+    
+    createBgHearts();
+    
+    // Element SDK Integration
+    async function onConfigChange(config) {
+      const mainQuestion = document.getElementById('mainQuestion');
+      const successTitle = document.getElementById('successTitle');
+      const successMessage = document.getElementById('successMessage');
+      
+      senderInfo.textContent = config.sender_name || defaultConfig.sender_name;
+      mainQuestion.textContent = config.main_question || defaultConfig.main_question;
+      yesBtn.textContent = config.yes_button_text || defaultConfig.yes_button_text;
+      
+      if (escapeCount === 0) {
+        noBtn.textContent = config.no_button_text || defaultConfig.no_button_text;
+      }
+      
+      successTitle.textContent = config.success_title || defaultConfig.success_title;
+      successMessage.textContent = config.success_message || defaultConfig.success_message;
+      
+      // Apply colors
+      const bgColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const buttonColor = config.button_color || defaultConfig.button_color;
+      
+      app.style.background = `linear-gradient(135deg, ${bgColor} 0%, #fecfef 50%, #fecfef 100%)`;
+      mainQuestion.style.color = textColor;
+      successTitle.style.color = textColor;
+      
+      yesBtn.style.background = `linear-gradient(135deg, #f093fb 0%, ${buttonColor} 100%)`;
+      restartBtn.style.background = `linear-gradient(135deg, #f093fb 0%, ${buttonColor} 100%)`;
+    }
+    
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.button_color || defaultConfig.button_color,
+            set: (value) => {
+              config.button_color = value;
+              window.elementSdk.setConfig({ button_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || 'Pacifico',
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || 48,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+    
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["sender_name", config.sender_name || defaultConfig.sender_name],
+        ["main_question", config.main_question || defaultConfig.main_question],
+        ["yes_button_text", config.yes_button_text || defaultConfig.yes_button_text],
+        ["no_button_text", config.no_button_text || defaultConfig.no_button_text],
+        ["success_title", config.success_title || defaultConfig.success_title],
+        ["success_message", config.success_message || defaultConfig.success_message]
+      ]);
+    }
+    
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9da28316c7d058',t:'MTc3MzA5NjU4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
